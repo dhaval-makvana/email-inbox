@@ -1,0 +1,11 @@
+{
+  "id": "partnerB",
+  "name": "Partner B",
+  "theme": "green",
+  "logo": "/logos/partnerB.svg",
+  "features": {
+    "previewSnippet": false,
+    "markAsSpam": true,
+    "bulkToolbar": true
+  }
+}

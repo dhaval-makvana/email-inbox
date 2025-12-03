@@ -1,35 +1,174 @@
 @import "tailwindcss";
 
-/* design tokens using CSS vars - we'll use these for partner theming later */
+/* ---------------- Base tokens (light defaults) ---------------- */
 :root {
-  --color-bg: #ffffff;
-  --color-fg: #0f172a;
-  --color-primary: #2563eb;
+  --color-bg: #ffffff; /* page background */
+  --color-fg: #0f1724; /* primary text */
+  --color-muted: #475569; /* secondary text */
+  --color-border: #e6edf3; /* borders / dividers */
+  --color-surface: #ffffff; /* card surface */
+  --surface-elev-1: #ffffff; /* list row base */
+  --surface-elev-2: #f1f5f9; /* unread / elevated row */
+  --color-primary: #0b5cff; /* default primary (partner overrides later) */
+  --color-primary-contrast: #ffffff;
+  --btn-border: rgba(11, 92, 255, 0.12);
+  --spam-bg: #fff1f2;
+  --spam-fg: #b91c1c;
+  --shadow-sm: 0 1px 2px rgba(2, 6, 23, 0.06);
 }
 
-/* partner theme examples */
-[data-theme="green"] {
-  --color-primary: #16a34a;
+/* ---------------- Dark mode base tokens (apply .dark on html) ---------------- */
+html.dark {
+  --color-bg: #061223; /* deep page background */
+  --color-fg: #e6eef8; /* primary text */
+  --color-muted: #9fb0c7; /* secondary text */
+  --color-border: #1f2a37;
+  --color-surface: #071226;
+  --surface-elev-1: #071226;
+  --surface-elev-2: #0b1724;
+  /* DO NOT set --color-primary here globally; partner overrides below will handle it */
+  --color-primary-contrast: #062031;
+  --btn-border: rgba(78, 168, 255, 0.14);
+  --spam-bg: #4c0414;
+  --spam-fg: #ffd6d6;
+  --shadow-sm: 0 2px 8px rgba(2, 6, 23, 0.35);
 }
+
+/* ---------------- Partner theme overrides (light mode) ---------------- */
 [data-theme="blue"] {
-  --color-primary: #2563eb;
+  --color-primary: #0b5cff; /* Partner A blue (light) */
+  --color-primary-contrast: #ffffff;
 }
 
-/* small helper */
+[data-theme="green"] {
+  --color-primary: #16a34a; /* Partner B green (light) */
+  --color-primary-contrast: #ffffff;
+}
+
+/* ---------------- Partner theme overrides in dark mode (scoped) ----------------
+   Target <html class="dark" data-theme="..."> so partner color is preserved in dark.
+*/
+html.dark[data-theme="blue"] {
+  --color-primary: #4ea8ff; /* brighter blue on dark for contrast */
+  --color-primary-contrast: #062031;
+}
+
+html.dark[data-theme="green"] {
+  --color-primary: #86efac; /* brighter green on dark for contrast */
+  --color-primary-contrast: #052116;
+}
+
+/* ---------------- Utility classes using tokens ---------------- */
 body {
   background: var(--color-bg);
   color: var(--color-fg);
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* simple .btn utility for quick use */
+/* card surface */
+.card,
+.bg-surface {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+/* improved button styling */
 .btn {
   background: var(--color-primary);
-  color: white;
+  color: var(--color-primary-contrast);
   padding: 0.4rem 0.7rem;
   border-radius: 0.375rem;
+  border: 1px solid var(--btn-border);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.06s ease, box-shadow 0.06s ease, opacity 0.06s ease;
+}
+.btn:hover {
+  transform: translateY(-1px);
+}
+.btn:active {
+  transform: translateY(0);
+  opacity: 0.95;
+}
+.btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* email row tokens */
+.email-row {
+  background: var(--surface-elev-1);
+  border-bottom: 1px solid var(--color-border);
+}
+.email-row.unread {
+  background: var(--surface-elev-2);
+}
+.email-subject {
+  color: var(--color-fg);
+}
+.email-subject.read {
+  color: var(--color-muted);
+  font-weight: 500;
+}
+.email-snippet {
+  color: var(--color-muted);
+}
+
+/* unread dot */
+.unread-dot {
+  height: 8px;
+  width: 8px;
+  border-radius: 999px;
+  background: var(--color-primary);
+  display: inline-block;
+}
+
+/* spam badge */
+.badge-spam {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  background: var(--spam-bg);
+  color: var(--spam-fg);
+  border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+/* subtle input styles */
+input[type="text"],
+textarea,
+input[type="search"],
+select {
+  background: var(--surface-elev-1);
+  color: var(--color-fg);
+  border: 1px solid var(--color-border);
+}
+
+/* small focus ring for keyboard users */
+:focus {
+  outline: 3px solid color-mix(in srgb, var(--color-primary) 20%, transparent);
+  outline-offset: 2px;
+}
+
+/* small helper classes for spacing used in components */
+.container-max {
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* Add basic transitions to reduce flash when switching themes */
+html,
+body,
+.email-row,
+.card {
+  transition: background-color 160ms ease, color 160ms ease,
+    border-color 160ms ease;
 }

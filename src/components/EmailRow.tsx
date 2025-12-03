@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import Link from "next/link";
 import dayjs from "dayjs";
@@ -26,36 +27,56 @@ export const EmailRow: React.FC<Props> = ({
   onToggle,
   showSnippet = true,
 }) => {
+  const rowClasses = `email-row ${
+    mail.isRead ? "" : "unread"
+  } p-3 flex gap-3 items-start`;
+  const subjectClass = `email-subject ${mail.isRead ? "read" : ""}`;
+
   return (
-    <div
-      className={`p-3 flex gap-3 items-start border-b ${
-        mail.isRead ? "bg-white" : "bg-slate-50"
-      }`}
-    >
+    <div className={rowClasses} role="listitem" data-email-id={mail.id}>
       <input
         aria-label={`select-${mail.id}`}
         type="checkbox"
         checked={checked}
         onChange={() => onToggle?.(mail.id)}
+        className="mt-1"
       />
 
       <div className="flex-1 min-w-0">
         <div className="flex justify-between items-start">
           <div className="truncate">
-            <div className="font-semibold text-sm truncate">{mail.sender}</div>
+            <div className="flex items-center gap-2">
+              {/* unread indicator */}
+              {!mail.isRead && (
+                <span className="unread-dot" title="Unread" aria-hidden />
+              )}
 
-            {/* ✔ Next.js 16 valid Link structure */}
-            <Link href={`/email/${mail.id}`} className="block">
-              <div className="truncate">{mail.subject}</div>
+              <div className="font-semibold text-sm truncate">
+                {mail.sender}
+              </div>
+
+              {mail.isSpam && (
+                <span
+                  className="ml-2 badge-spam"
+                  aria-label="spam"
+                  title="Marked as spam"
+                >
+                  Spam
+                </span>
+              )}
+            </div>
+
+            <Link href={`/email/${mail.id}`} className="block mt-1">
+              <div className={`${subjectClass} truncate`}>{mail.subject}</div>
               {showSnippet && mail.snippet && (
-                <div className="text-sm text-slate-500 truncate">
+                <div className="email-snippet text-sm truncate">
                   {mail.snippet}
                 </div>
               )}
             </Link>
           </div>
 
-          <div className="text-xs text-slate-400 ml-3">
+          <div className="text-xs ml-3" style={{ color: "var(--color-muted)" }}>
             {dayjs(mail.date).format("MMM D")}
           </div>
         </div>
@@ -63,3 +84,5 @@ export const EmailRow: React.FC<Props> = ({
     </div>
   );
 };
+
+EmailRow.displayName = "EmailRow";
