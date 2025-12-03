@@ -1,0 +1,102 @@
+[
+  {
+    "id": "1",
+    "sender": "Netflix",
+    "subject": "Your monthly invoice is ready",
+    "snippet": "Your HD subscription bill for this month is now available...",
+    "date": "2025-02-15T10:12:00Z",
+    "body": "<p>Hi Dhaval,<br>Your monthly Netflix invoice is now ready. You can view or download it from your account dashboard.<br><br><strong>Amount:</strong> ₹649<br><strong>Billing Period:</strong> Feb 2025<br><br>Thank you for being a valued subscriber!</p>",
+    "isRead": false,
+    "isSpam": false
+  },
+  {
+    "id": "2",
+    "sender": "Amazon",
+    "subject": "Your order has been shipped",
+    "snippet": "Great news! Your order #A12784 is on the way...",
+    "date": "2025-02-14T08:26:00Z",
+    "body": "<p>Your package has shipped!<br><br>Estimated delivery: <strong>Feb 17–19</strong><br>Track your package in the Amazon app.<br><br>Thanks for shopping with us.</p>",
+    "isRead": true,
+    "isSpam": false
+  },
+  {
+    "id": "3",
+    "sender": "GitHub",
+    "subject": "Security alert: New login detected",
+    "snippet": "A new sign-in to your GitHub account was detected from Chrome...",
+    "date": "2025-02-13T22:10:00Z",
+    "body": "<p>A new login was detected for your GitHub account.<br><br><strong>Location:</strong> Bengaluru, India<br><strong>Browser:</strong> Chrome<br><br>If this was not you, please secure your account immediately.</p>",
+    "isRead": false,
+    "isSpam": false
+  },
+  {
+    "id": "4",
+    "sender": "LinkedIn",
+    "subject": "Someone viewed your profile",
+    "snippet": "You have new profile views this week...",
+    "date": "2025-02-13T14:05:00Z",
+    "body": "<p>Your profile is trending this week!<br>You received <strong>14 new views</strong> in the last 24 hours.<br><br>Keep your profile updated to attract more opportunities.</p>",
+    "isRead": true,
+    "isSpam": false
+  },
+  {
+    "id": "5",
+    "sender": "Flipkart",
+    "subject": "Deals for electronics you may like",
+    "snippet": "Big discounts on laptops and cameras...",
+    "date": "2025-02-12T19:45:00Z",
+    "body": "<p>Hi Dhaval, here are personalized deals based on your browsing.<br><ul><li>MacBook Air M2 – 12% off</li><li>Sony Alpha Camera – ₹8,000 off</li></ul>Grab them before they're gone!</p>",
+    "isRead": true,
+    "isSpam": false
+  },
+  {
+    "id": "6",
+    "sender": "Google",
+    "subject": "Your storage is almost full",
+    "snippet": "You are using 14.8 GB out of 15 GB...",
+    "date": "2025-02-11T09:30:00Z",
+    "body": "<p>Your Google account storage is <strong>almost full</strong>.<br>Upgrade to Google One to get more space for photos, files, and emails.</p>",
+    "isRead": false,
+    "isSpam": false
+  },
+  {
+    "id": "7",
+    "sender": "HDFC Bank",
+    "subject": "Important: Update your KYC",
+    "snippet": "Your KYC needs to be updated to avoid service interruption...",
+    "date": "2025-02-10T16:12:00Z",
+    "body": "<p>Dear Customer,<br>Your KYC is due for an update. Please visit your nearest branch or update online.<br><br>This is a mandatory RBI requirement.</p>",
+    "isRead": true,
+    "isSpam": false
+  },
+  {
+    "id": "8",
+    "sender": "YouTube",
+    "subject": "New login from a Samsung device",
+    "snippet": "A new device has signed in to your Google account...",
+    "date": "2025-02-09T11:50:00Z",
+    "body": "<p>We noticed a new login to your Google account from a Samsung device.<br>If this was not you, please change your password immediately.</p>",
+    "isRead": false,
+    "isSpam": false
+  },
+  {
+    "id": "9",
+    "sender": "Temu",
+    "subject": "🎁 Exclusive offer just for you!",
+    "snippet": "Get 70% off on selected items...",
+    "date": "2025-02-09T09:20:00Z",
+    "body": "<p>Huge discounts waiting for you! Up to <strong>70% off</strong> on selected electronics.<br>Limited-time offer.</p>",
+    "isRead": true,
+    "isSpam": true
+  },
+  {
+    "id": "10",
+    "sender": "Twitter",
+    "subject": "Your tweet is getting attention",
+    "snippet": "Your recent tweet has received 45 likes...",
+    "date": "2025-02-09T07:30:00Z",
+    "body": "<p>Your latest tweet is performing well!<br><br><strong>Engagement:</strong><br>- 45 likes<br>- 12 retweets<br>- 5 comments</p>",
+    "isRead": false,
+    "isSpam": false
+  }
+]
