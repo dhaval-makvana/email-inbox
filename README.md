@@ -1,36 +1,149 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📬 Email Inbox — Partner-Configurable UI (Next.js + TypeScript)
 
-## Getting Started
+This project implements a dynamic email inbox where the UI **changes based on the selected partner configuration**.  
+Partners may have different branding, email metadata visibility, or available bulk actions (e.g., Partner B allows _Mark Spam_; Partner A does not).
 
-First, run the development server:
+The app includes:
+
+- Persistent inbox state per partner (via `localStorage`)
+- Email detail page with reply flow
+- Bulk actions (Read, Unread, Spam\*, Delete)
+- Search and filtering
+- Partner-level theme + branding
+- Light/Dark mode toggle
+- Automated test coverage
+
+---
+
+## 🚀 Tech Stack
+
+| Category       | Tool                         |
+| -------------- | ---------------------------- |
+| Framework      | Next.js (App Router)         |
+| Language       | TypeScript                   |
+| Styling        | TailwindCSS                  |
+| State & Config | React Context + LocalStorage |
+| Testing        | Jest + React Testing Library |
+
+---
+
+## 🧠 Key Features
+
+### 🔹 1. Partner Configuration System
+
+Each partner controls:
+
+- Theme colors
+- Logo
+- Feature toggles (e.g., snippet visibility, spam action)
+- Storage scope (separate inbox per partner)
+
+Example config:
+
+| Feature               | Partner A | Partner B |
+| --------------------- | --------- | --------- |
+| Email Snippet in List | ✅        | ❌        |
+| "Mark as Spam" button | ❌        | ✅        |
+| Bulk Actions Toolbar  | ✅        | ✅        |
+| Theme                 | Blue      | Green     |
+
+Configuration files are stored as:
+
+/data/partners/partnerA.json
+/data/partners/partnerB.json
+
+yaml
+Copy code
+
+---
+
+### 🔹 2. Inbox UI
+
+- Displays sender, subject, snippet\*, and date
+- Unread/read visual indicators
+- Row checkboxes for multiselect workflow
+- Fully functional bulk toolbar
+- Search input filters by sender or subject
+
+\* snippet visibility is partner-controlled.
+
+---
+
+### 🔹 3. Email Detail View
+
+Includes:
+
+- Sender, subject, timestamp
+- Full email body (`dangerouslySetInnerHTML`)
+- Actions:
+
+  - Mark Read / Unread
+  - Mark Spam (if enabled)
+  - Delete
+  - Reply (inline editor UI)
+
+Reply send is a no-op by requirement.
+
+---
+
+### 🔹 4. Accessibility & Usability
+
+- Keyboard-friendly interactive controls
+- Semantic HTML roles (`combobox`, `listitem`, `button`, `checkbox`)
+- Cursor feedback on all CTAs
+
+---
+
+## 🧪 Testing Strategy
+
+Unit + integration level tests using:
+
+- **Jest**
+- **React Testing Library**
+
+Coverage includes:
+
+✔ Inbox rendering and metadata  
+✔ Selection + bulk toolbar behavior  
+✔ Partner-driven feature visibility  
+✔ Search functionality  
+✔ Email detail actions  
+✔ Theme toggle
+
+### Run tests:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm test
+▶️ Getting Started
+Install dependencies
+bash
+Copy code
+pnpm install
+Start app
+bash
+Copy code
 pnpm dev
-# or
-bun dev
+The inbox will be available at:
+
+arduino
+Copy code
+http://localhost:3000
+📁 Project Structure
+bash
+Copy code
+/components
+  ├─ InboxList.tsx
+  ├─ EmailRow.tsx
+  ├─ EmailDetailClient.tsx
+  ├─ PartnerSwitcher.tsx
+  ├─ PartnerContext.tsx
+/data
+  ├─ emails.json
+  └─ partners/*.json
+/test
+  ├─ InboxList.test.tsx
+  ├─ PartnerConfig.test.tsx
+  ├─ EmailDetail.test.tsx
+  ├─ ThemeToggle.test.tsx
+  ├─ EmailRow.test.tsx
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
