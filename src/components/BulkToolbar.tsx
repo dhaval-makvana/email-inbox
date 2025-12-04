@@ -1,7 +1,8 @@
-// components/BulkToolbar.tsx
 "use client";
 import React from "react";
 import { usePartner } from "./PartnerContext";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type Props = {
   selectedIds: string[];
@@ -30,64 +31,65 @@ export const BulkToolbar: React.FC<Props> = ({
   if (!partner.features.bulkToolbar) return null;
 
   return (
-    <div className="px-3 py-2 border-b border-(--color-border) flex items-center gap-3 bg-surface">
+    <div
+      className="px-3 py-2 border-b flex items-center gap-3 bg-surface"
+      style={{ borderColor: "var(--color-border)" }}
+    >
       {/* Left: selection + count */}
       <div className="flex items-center gap-2">
-        <input
-          type="checkbox"
+        <Checkbox
           aria-label="select-all"
-          onChange={onToggleSelectAll}
           checked={allVisibleSelected}
-          ref={(el) => {
-            if (!el) return;
-            (el as HTMLInputElement).indeterminate =
-              !allVisibleSelected && someVisibleSelected;
-          }}
+          onChange={onToggleSelectAll}
         />
-        <span className="text-xs text-(--color-muted)">
+        <span className="text-xs" style={{ color: "var(--color-muted)" }}>
           {selectedIds.length} selected
         </span>
       </div>
 
       {/* Middle: actions */}
       <div className="flex gap-2 ml-4">
-        <button
-          className="btn"
+        <Button
+          size="sm"
+          variant="primary"
           onClick={() => onMarkRead(selectedIds, true)}
           disabled={!hasSelection}
         >
           Mark Read
-        </button>
+        </Button>
 
-        <button
-          className="btn"
+        <Button
+          size="sm"
+          variant="secondary"
           onClick={() => onMarkRead(selectedIds, false)}
           disabled={!hasSelection}
         >
           Mark Unread
-        </button>
+        </Button>
 
         {partner.features.markAsSpam && (
-          <button
-            className="btn"
+          <Button
+            size="sm"
+            variant="secondary"
             onClick={() => onMarkSpam(selectedIds)}
             disabled={!hasSelection}
           >
             Mark Spam
-          </button>
+          </Button>
         )}
 
-        <button
-          className="btn-danger"
+        <Button
+          size="sm"
+          variant="danger"
           onClick={() => onDelete(selectedIds)}
           disabled={!hasSelection}
         >
           Delete
-        </button>
+        </Button>
       </div>
 
       {/* Right: total count */}
-      <div className="ml-auto text-xs text-(--color-muted)">
+      <div className="ml-auto text-xs" style={{ color: "var(--color-muted)" }}>
         {totalCount} messages
       </div>
     </div>

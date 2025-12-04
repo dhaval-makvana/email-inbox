@@ -2,17 +2,23 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { usePartner } from "../../../components/PartnerContext";
-import type { Email } from "../../../components/EmailRow";
-import bundledEmails from "../../../data/emails.json"; // initial seed
+import { usePartner } from "@/components/PartnerContext";
+import type { Email } from "@/components/EmailRow";
+import bundledEmails from "@/data/emails.json";
+import { Button } from "@/components/ui/button";
+import { H2, Muted } from "@/components/ui/typography";
+import dayjs from "dayjs";
 
+// ---- Storage Helpers ----
 const loadStored = (key: string): Email[] => {
   try {
     if (typeof window === "undefined") return [];
     const raw = localStorage.getItem(key);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    return Array.isArray(parsed)
+      ? parsed.filter((e): e is Email => e !== null)
+      : [];
   } catch {
     return [];
   }
@@ -20,12 +26,11 @@ const loadStored = (key: string): Email[] => {
 
 const persistList = (key: string, list: Email[]) => {
   try {
-    localStorage.setItem(key, JSON.stringify(list));
-    try {
-      window.dispatchEvent(
-        new CustomEvent("inbox:updated", { detail: { key } })
-      );
-    } catch {}
+    const filtered = list.filter((e): e is Email => !!e);
+    localStorage.setItem(key, JSON.stringify(filtered));
+
+    // sync inbox
+    window.dispatchEvent(new CustomEvent("inbox:updated", { detail: { key } }));
   } catch (e) {
     console.warn("failed to persist", e);
   }
@@ -41,125 +46,93 @@ export default function EmailDetailClient() {
   const [mail, setMail] = useState<Email | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // reply UI state
+  // Reply UI state
   const [replyOpen, setReplyOpen] = useState(false);
   const [replyText, setReplyText] = useState("");
 
-  // Load mail on mount / partner change
+  // ---- Load email ----
   useEffect(() => {
     if (!id) {
       setMail(null);
       setLoading(false);
       return;
     }
+
     setLoading(true);
+
     const stored = loadStored(STORAGE_KEY);
-    const foundInStored = stored.find((m) => m.id === id) ?? null;
+    let found = stored.find((m) => m.id === id) ?? null;
 
-    if (foundInStored) {
-      setMail(foundInStored);
-      setLoading(false);
-      // if not read, mark read automatically
-      if (!foundInStored.isRead) {
-        const updated = { ...foundInStored, isRead: true };
-        const next = stored.some((m) => m.id === id)
-          ? stored.map((m) => (m.id === id ? updated : m))
-          : [...stored, updated];
-        persistList(STORAGE_KEY, next);
-        setMail(updated);
+    // If not in stored, fallback to bundled
+    if (!found) {
+      const bundledFound =
+        (bundledEmails as Email[]).find((m) => m.id === id) ?? null;
+
+      if (bundledFound) {
+        found = { ...bundledFound, isRead: true }; // auto mark read on open
+        const merged = [...stored, found].filter((m): m is Email => !!m);
+        persistList(STORAGE_KEY, merged);
       }
-      return;
     }
 
-    // fallback to bundled seed
-    const foundInBundled =
-      (bundledEmails as Email[]).find((m) => m.id === id) ?? null;
-    if (foundInBundled) {
-      // mark as read on open
-      const withRead = foundInBundled.isRead
-        ? foundInBundled
-        : { ...foundInBundled, isRead: true };
-
-      setMail(withRead);
-
-      // seed partner store if empty or doesn't contain this id
-      const nextList = stored.length ? stored : (bundledEmails as Email[]);
-      const exists = nextList.some((m) => m.id === id);
-      const merged = exists
-        ? nextList.map((m) => (m.id === id ? withRead : m))
-        : [...nextList, withRead];
-      persistList(STORAGE_KEY, merged);
-
-      setLoading(false);
-      return;
+    // Auto-mark unread emails as read
+    if (found && !found.isRead) {
+      const updated = { ...found, isRead: true };
+      const updatedList = loadStored(STORAGE_KEY).map((m) =>
+        m.id === updated.id ? updated : m
+      );
+      persistList(STORAGE_KEY, updatedList);
+      found = updated;
     }
 
-    setMail(null);
+    setMail(found);
     setLoading(false);
-  }, [id, partner.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [id, partner.id]); // partner change resets mailbox
 
-  const persist = (updated: Email) => {
+  // ---- Persist a single updated message to storage ----
+  const updateMail = (updated: Email) => {
     const list = loadStored(STORAGE_KEY);
-    const exists = list.some((m) => m.id === updated.id);
-    const next = exists
+    const normalized: Email[] = list.some((m) => m.id === updated.id)
       ? list.map((m) => (m.id === updated.id ? updated : m))
       : [...list, updated];
-    persistList(STORAGE_KEY, next);
+
+    persistList(STORAGE_KEY, normalized);
     setMail(updated);
   };
 
-  // actions
+  // ---- Actions ----
   const toggleRead = () => {
     if (!mail) return;
-    const upd = { ...mail, isRead: !mail.isRead };
-    persist(upd);
+    updateMail({ ...mail, isRead: !mail.isRead });
   };
 
   const toggleSpam = () => {
     if (!mail) return;
-    const upd = { ...mail, isSpam: !mail.isSpam };
-    persist(upd);
+    updateMail({ ...mail, isSpam: !mail.isSpam });
   };
 
   const handleDelete = () => {
     if (!mail) return;
-    const list = loadStored(STORAGE_KEY);
-    const next = list.filter((m) => m.id !== mail.id);
-    persistList(STORAGE_KEY, next);
+    const list = loadStored(STORAGE_KEY).filter((m) => m.id !== mail.id);
+    persistList(STORAGE_KEY, list);
     router.push("/");
   };
 
-  // reply handlers (no-op send)
-  const openReply = () => {
-    setReplyOpen(true);
-    setReplyText("");
-  };
-  const cancelReply = () => {
-    setReplyOpen(false);
-    setReplyText("");
-  };
   const sendReply = () => {
-    // no-op: we could optionally persist a "sent" preview to localStorage
-    // For now: close composer and clear text
     setReplyOpen(false);
     setReplyText("");
-    // Optionally show a tiny client-side confirmation (toast) — omitted for simplicity
+    // No-op but UI closes
   };
 
+  // ---- Rendering ----
   if (loading) {
-    return (
-      <div className="min-h-[40vh] p-6">
-        <div className="text-slate-500">Loading…</div>
-      </div>
-    );
+    return <div className="min-h-[40vh] p-6 text-slate-500">Loading…</div>;
   }
 
-  if (!id || !mail) {
+  if (!mail) {
     return (
-      <div className="min-h-[40vh] p-6">
-        <div className="text-slate-500">
-          Email not found in this partner inbox.
-        </div>
+      <div className="min-h-[40vh] p-6 text-slate-500">
+        Email not found in this partner inbox.
       </div>
     );
   }
@@ -168,34 +141,42 @@ export default function EmailDetailClient() {
     <div className="min-h-[60vh] p-6 max-w-3xl">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold">{mail.subject}</h2>
-          <div className="text-sm text-slate-500">
-            {mail.sender} • {new Date(mail.date).toLocaleString()}
-          </div>
+          <H2>{mail.subject}</H2>
+          <Muted>
+            {mail.sender} • {dayjs(mail.date).format("MMM D, YYYY h:mm A")}
+          </Muted>
         </div>
 
         <div className="flex gap-2 items-center">
           {mail.isSpam && (
-            <span className="inline-flex px-2 py-0.5 rounded-full bg-red-100 text-red-700 text-xs">
+            <span
+              aria-label="spam"
+              className="badge-spam"
+              title="Marked as spam"
+            >
               Spam
             </span>
           )}
 
-          <button className="btn" onClick={toggleRead}>
+          <Button size="sm" onClick={toggleRead}>
             {mail.isRead ? "Mark Unread" : "Mark Read"}
-          </button>
+          </Button>
 
-          <button className="btn" onClick={toggleSpam}>
+          <Button size="sm" variant="secondary" onClick={toggleSpam}>
             {mail.isSpam ? "Unmark Spam" : "Mark Spam"}
-          </button>
+          </Button>
 
-          <button className="btn" onClick={handleDelete}>
+          <Button size="sm" variant="danger" onClick={handleDelete}>
             Delete
-          </button>
+          </Button>
 
-          <button className="btn" onClick={openReply}>
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={() => setReplyOpen(true)}
+          >
             Reply
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -204,31 +185,34 @@ export default function EmailDetailClient() {
         dangerouslySetInnerHTML={{ __html: mail.body ?? "<p>(no body)</p>" }}
       />
 
-      {/* Reply composer */}
       {replyOpen && (
-        <div className="mt-6 border rounded p-4 bg-gray-50">
-          <div className="mb-2 text-sm text-slate-600">
+        <div className="mt-6 border rounded p-4 bg-gray-50 dark:bg-gray-800">
+          <div className="mb-2 text-sm text-slate-600 dark:text-slate-300">
             Replying to {mail.sender}
           </div>
+
           <textarea
             value={replyText}
             onChange={(e) => setReplyText(e.target.value)}
             rows={6}
-            className="w-full border rounded p-2"
+            className="w-full border rounded p-2 dark:bg-gray-900"
             placeholder="Write your reply..."
             aria-label="reply-body"
           />
+
           <div className="mt-3 flex gap-2">
-            <button className="btn" onClick={sendReply} aria-label="send-reply">
+            <Button size="sm" onClick={sendReply} aria-label="send-reply">
               Send
-            </button>
-            <button
-              className="btn"
-              onClick={cancelReply}
+            </Button>
+
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={() => setReplyOpen(false)}
               aria-label="cancel-reply"
             >
               Cancel
-            </button>
+            </Button>
           </div>
         </div>
       )}

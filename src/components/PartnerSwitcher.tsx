@@ -2,33 +2,43 @@
 
 import React from "react";
 import { usePartner } from "./PartnerContext";
-import PartnerLogo from "./PartnerLogo";
+import { Select } from "@/components/ui/select";
+import { PartnerALogo } from "@/components/logos/PartnerA";
+import { PartnerBLogo } from "@/components/logos/PartnerB";
 
 export const PartnerSwitcher: React.FC = () => {
   const { partner, partners, setPartnerId } = usePartner();
 
+  const renderLogo = () => {
+    if (partner.id === "partnerA") return <PartnerALogo />;
+    if (partner.id === "partnerB") return <PartnerBLogo />;
+    return null;
+  };
+
   return (
     <div className="flex items-center gap-4">
-      {/* label */}
-      <label className="text-sm font-medium text-slate-600">Partner</label>
+      <label
+        htmlFor="partner-select"
+        className="text-sm font-medium text-slate-600"
+      >
+        Partner
+      </label>
 
-      {/* select dropdown */}
-      <select
-        className="border rounded px-2 py-1 text-sm bg-white"
+      <Select
+        id="partner-select"
+        aria-label="Partner"
         value={partner.id}
         onChange={(e) => setPartnerId(e.target.value)}
+        className="border rounded px-2 py-1 text-sm bg-white"
       >
         {partners.map((p) => (
           <option key={p.id} value={p.id}>
             {p.name}
           </option>
         ))}
-      </select>
+      </Select>
 
-      {/* partner logo component */}
-      <div className="flex items-center">
-        <PartnerLogo id={partner.id} />
-      </div>
+      <div className="flex items-center">{renderLogo()}</div>
     </div>
   );
 };
