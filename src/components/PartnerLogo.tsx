@@ -6,9 +6,9 @@ import { PartnerBLogo } from "@/components/logos/PartnerB";
 const PartnerLogo = React.memo(({ id }: { id: string }) => {
   switch (id) {
     case "partnerA":
-      return <PartnerALogo width={128} />;
+      return <PartnerALogo size={32} />;
     case "partnerB":
-      return <PartnerBLogo width={128} />;
+      return <PartnerBLogo size={32} />;
     default:
       return null;
   }

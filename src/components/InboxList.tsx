@@ -169,8 +169,8 @@ export const InboxList: React.FC<Props> = ({ initialEmails }) => {
   };
 
   return (
-    <div className="bg-white rounded shadow-sm">
-      <div className="p-3 border-b">
+    <div className="bg-transparent rounded shadow-sm">
+      <div className="px-3 pt-3 pb-2 bg-surface">
         <input
           className="border rounded px-3 py-2 w-full"
           placeholder="Search sender or subject…"

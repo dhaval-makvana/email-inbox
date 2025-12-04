@@ -1,3 +1,4 @@
+// components/BulkToolbar.tsx
 "use client";
 import React from "react";
 import { usePartner } from "./PartnerContext";
@@ -24,11 +25,13 @@ export const BulkToolbar: React.FC<Props> = ({
   someVisibleSelected,
 }) => {
   const { partner } = usePartner();
+  const hasSelection = selectedIds.length > 0;
 
   if (!partner.features.bulkToolbar) return null;
 
   return (
-    <div className="p-2 border-b flex items-center gap-3 bg-slate-50">
+    <div className="px-3 py-2 border-b border-(--color-border) flex items-center gap-3 bg-surface">
+      {/* Left: selection + count */}
       <div className="flex items-center gap-2">
         <input
           type="checkbox"
@@ -37,53 +40,58 @@ export const BulkToolbar: React.FC<Props> = ({
           checked={allVisibleSelected}
           ref={(el) => {
             if (!el) return;
-            // set indeterminate for partial selection
             (el as HTMLInputElement).indeterminate =
               !allVisibleSelected && someVisibleSelected;
           }}
         />
-        <span className="text-sm">{selectedIds.length} selected</span>
+        <span className="text-xs text-(--color-muted)">
+          {selectedIds.length} selected
+        </span>
       </div>
 
+      {/* Middle: actions */}
       <div className="flex gap-2 ml-4">
         <button
-          className="btn px-3 py-1"
+          className="btn"
           onClick={() => onMarkRead(selectedIds, true)}
-          disabled={selectedIds.length === 0}
+          disabled={!hasSelection}
         >
           Mark Read
         </button>
 
         <button
-          className="btn px-3 py-1"
+          className="btn"
           onClick={() => onMarkRead(selectedIds, false)}
-          disabled={selectedIds.length === 0}
+          disabled={!hasSelection}
         >
           Mark Unread
         </button>
 
         {partner.features.markAsSpam && (
           <button
-            className="btn px-3 py-1"
+            className="btn"
             onClick={() => onMarkSpam(selectedIds)}
-            disabled={selectedIds.length === 0}
+            disabled={!hasSelection}
           >
             Mark Spam
           </button>
         )}
 
         <button
-          className="btn px-3 py-1"
+          className="btn-danger"
           onClick={() => onDelete(selectedIds)}
-          disabled={selectedIds.length === 0}
+          disabled={!hasSelection}
         >
           Delete
         </button>
       </div>
 
-      <div className="ml-auto text-sm text-slate-500">
+      {/* Right: total count */}
+      <div className="ml-auto text-xs text-(--color-muted)">
         {totalCount} messages
       </div>
     </div>
   );
 };
+
+BulkToolbar.displayName = "BulkToolbar";

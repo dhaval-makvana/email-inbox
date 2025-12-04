@@ -1,124 +1,262 @@
 @import "tailwindcss";
 
-/* ---------------- Base tokens (light defaults) ---------------- */
+/* ------------- Base neutrals (light mode) ------------- */
 :root {
+  /* Page + text */
   --color-bg: #ffffff; /* page background */
-  --color-fg: #0f1724; /* primary text */
-  --color-muted: #475569; /* secondary text */
-  --color-border: #e6edf3; /* borders / dividers */
-  --color-surface: #ffffff; /* card surface */
-  --surface-elev-1: #ffffff; /* list row base */
-  --surface-elev-2: #f1f5f9; /* unread / elevated row */
-  --color-primary: #0b5cff; /* default primary (partner overrides later) */
-  --color-primary-contrast: #ffffff;
-  --btn-border: rgba(11, 92, 255, 0.12);
-  --spam-bg: #fff1f2;
-  --spam-fg: #b91c1c;
-  --shadow-sm: 0 1px 2px rgba(2, 6, 23, 0.06);
+  --color-fg: #0f172a; /* primary text */
+  --color-muted: #6b7280; /* secondary text (slate-500) */
+
+  /* Surfaces */
+  --color-border: #e5e7eb; /* neutral border */
+  --color-surface: #ffffff; /* cards */
+  --surface-elev-1: #ffffff; /* normal row */
+  --surface-elev-2: #eff6ff; /* unread row (very light blue) */
+
+  /* Primary defaults (partner overrides below) */
+  --color-primary: #2563eb; /* tailwind blue-600 */
+  --color-primary-soft: #dbeafe; /* blue-100 (soft fill) */
+  --color-primary-contrast: #ffffff; /* text on primary */
+
+  /* Status (spam / danger) */
+  --spam-bg: #fee2e2; /* red-100 */
+  --spam-fg: #b91c1c; /* red-700 */
+
+  /* Placeholder */
+  --placeholder: rgba(107, 114, 128, 0.6); /* gray-500 @ 60% */
+
+  /* Shadows / misc */
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
 }
 
-/* ---------------- Dark mode base tokens (apply .dark on html) ---------------- */
+/* ------------- Dark mode neutrals ------------- */
 html.dark {
-  --color-bg: #061223; /* deep page background */
-  --color-fg: #e6eef8; /* primary text */
-  --color-muted: #9fb0c7; /* secondary text */
-  --color-border: #1f2a37;
-  --color-surface: #071226;
-  --surface-elev-1: #071226;
-  --surface-elev-2: #0b1724;
-  /* DO NOT set --color-primary here globally; partner overrides below will handle it */
-  --color-primary-contrast: #062031;
-  --btn-border: rgba(78, 168, 255, 0.14);
-  --spam-bg: #4c0414;
-  --spam-fg: #ffd6d6;
-  --shadow-sm: 0 2px 8px rgba(2, 6, 23, 0.35);
+  --color-bg: #020617; /* slate-950 */
+  --color-fg: #e5e7eb; /* slate-200 */
+  --color-muted: #9ca3af; /* gray-400 */
+
+  --color-border: #1f2937; /* gray-800 */
+  --color-surface: #020617; /* header/page surface */
+  --surface-elev-1: #020617; /* rows */
+  --surface-elev-2: #0b1220; /* unread row */
+
+  /* primary soft + contrast in dark; actual primary via partner below */
+  --color-primary-soft: #0b1220;
+  --color-primary-contrast: #020617;
+
+  /* spam / danger */
+  --spam-bg: #7f1d1d; /* red-900 */
+  --spam-fg: #fecaca; /* red-200 */
+
+  /* Placeholder */
+  --placeholder: rgba(148, 163, 184, 0.45); /* gray-400 @ ~45% */
+
+  --shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.4);
 }
 
-/* ---------------- Partner theme overrides (light mode) ---------------- */
+/* ------------- Partner themes (light) ------------- */
+
 [data-theme="blue"] {
-  --color-primary: #0b5cff; /* Partner A blue (light) */
+  --color-primary: #2563eb; /* blue-600 */
+  --color-primary-soft: #dbeafe; /* blue-100 */
   --color-primary-contrast: #ffffff;
 }
 
 [data-theme="green"] {
-  --color-primary: #16a34a; /* Partner B green (light) */
+  --color-primary: #16a34a; /* green-600 */
+  --color-primary-soft: #dcfce7; /* green-100 */
   --color-primary-contrast: #ffffff;
 }
 
-/* ---------------- Partner theme overrides in dark mode (scoped) ----------------
-   Target <html class="dark" data-theme="..."> so partner color is preserved in dark.
-*/
+/* ------------- Partner themes (dark) ------------- */
+
 html.dark[data-theme="blue"] {
-  --color-primary: #4ea8ff; /* brighter blue on dark for contrast */
-  --color-primary-contrast: #062031;
+  --color-primary: #60a5fa; /* blue-400 */
+  --color-primary-soft: #0b1220;
+  --color-primary-contrast: #020617;
 }
 
 html.dark[data-theme="green"] {
-  --color-primary: #86efac; /* brighter green on dark for contrast */
-  --color-primary-contrast: #052116;
+  --color-primary: #4ade80; /* green-400 */
+  --color-primary-soft: #052e16;
+  --color-primary-contrast: #ecfdf5;
 }
 
-/* ---------------- Utility classes using tokens ---------------- */
+/* ------------- Global element styles ------------- */
+
 body {
   background: var(--color-bg);
   color: var(--color-fg);
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
-/* card surface */
-.card,
-.bg-surface {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
+/* Layout helper */
+.container-max {
+  max-width: 1100px;
+  margin-inline: auto;
+  padding-inline: 1rem;
 }
 
-/* improved button styling */
+/* ------------- PRIMARY button ------------- */
+
 .btn {
   background: var(--color-primary);
   color: var(--color-primary-contrast);
-  padding: 0.4rem 0.7rem;
+  padding: 0.4rem 0.8rem;
   border-radius: 0.375rem;
-  border: 1px solid var(--btn-border);
+  border: 1px solid
+    color-mix(in srgb, var(--color-primary) 40%, var(--color-border));
   box-shadow: var(--shadow-sm);
-  transition: transform 0.06s ease, box-shadow 0.06s ease, opacity 0.06s ease;
-}
-.btn:hover {
-  transform: translateY(-1px);
-}
-.btn:active {
-  transform: translateY(0);
-  opacity: 0.95;
-}
-.btn[disabled] {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
+  font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+  transition: background-color 120ms ease, color 120ms ease, transform 80ms ease,
+    box-shadow 120ms ease, opacity 120ms ease;
 }
 
-/* email row tokens */
+.btn:hover:not([disabled]) {
+  background: color-mix(in srgb, var(--color-primary) 85%, #ffffff 15%);
+  transform: translateY(-1px);
+}
+
+.btn:active:not([disabled]) {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Disabled primary */
+.btn[disabled] {
+  background: color-mix(
+    in srgb,
+    var(--color-primary-soft) 70%,
+    var(--color-surface) 30%
+  );
+  color: color-mix(in srgb, var(--color-muted) 70%, var(--color-fg) 30%);
+  border-color: color-mix(
+    in srgb,
+    var(--color-border) 70%,
+    var(--color-primary-soft) 30%
+  );
+  opacity: 0.9;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ------------- SECONDARY (neutral) button ------------- */
+
+.btn-secondary {
+  background: var(--color-surface);
+  color: var(--color-fg);
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.375rem;
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+  transition: background-color 120ms ease, color 120ms ease, transform 80ms ease,
+    box-shadow 120ms ease, opacity 120ms ease;
+}
+
+.btn-secondary:hover:not([disabled]) {
+  background: color-mix(
+    in srgb,
+    var(--color-surface) 75%,
+    var(--color-primary-soft) 25%
+  );
+  transform: translateY(-1px);
+}
+
+.btn-secondary:active:not([disabled]) {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Disabled secondary */
+.btn-secondary[disabled] {
+  background: color-mix(
+    in srgb,
+    var(--color-surface) 80%,
+    var(--color-border) 20%
+  );
+  color: var(--color-muted);
+  border-color: var(--color-border);
+  opacity: 0.8;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ------------- DANGER / destructive button ------------- */
+
+.btn-danger {
+  background: var(--spam-bg);
+  color: var(--spam-fg);
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.375rem;
+  border: 1px solid color-mix(in srgb, var(--spam-fg) 30%, var(--color-border));
+  box-shadow: var(--shadow-sm);
+  font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+  transition: background-color 120ms ease, color 120ms ease, transform 80ms ease,
+    box-shadow 120ms ease, opacity 120ms ease;
+}
+
+.btn-danger:hover:not([disabled]) {
+  background: color-mix(in srgb, var(--spam-bg) 80%, var(--spam-fg) 20%);
+  transform: translateY(-1px);
+}
+
+.btn-danger:active:not([disabled]) {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.btn-danger[disabled] {
+  background: color-mix(in srgb, var(--spam-bg) 60%, var(--color-surface) 40%);
+  color: color-mix(in srgb, var(--spam-fg) 60%, var(--color-muted) 40%);
+  border-color: color-mix(in srgb, var(--color-border) 70%, var(--spam-bg) 30%);
+  opacity: 0.85;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ------------- Email list / rows ------------- */
+
 .email-row {
   background: var(--surface-elev-1);
   border-bottom: 1px solid var(--color-border);
 }
+
 .email-row.unread {
   background: var(--surface-elev-2);
 }
+
 .email-subject {
   color: var(--color-fg);
 }
+
 .email-subject.read {
   color: var(--color-muted);
   font-weight: 500;
 }
+
 .email-snippet {
   color: var(--color-muted);
 }
 
-/* unread dot */
+/* Unread dot */
 .unread-dot {
   height: 8px;
   width: 8px;
@@ -127,7 +265,7 @@ body {
   display: inline-block;
 }
 
-/* spam badge */
+/* Spam badge */
 .badge-spam {
   display: inline-flex;
   align-items: center;
@@ -139,36 +277,97 @@ body {
   border: 1px solid rgba(0, 0, 0, 0.03);
 }
 
-/* subtle input styles */
+/* ------------- Inputs / selects ------------- */
+
 input[type="text"],
-textarea,
 input[type="search"],
+textarea,
 select {
   background: var(--surface-elev-1);
   color: var(--color-fg);
   border: 1px solid var(--color-border);
 }
 
-/* small focus ring for keyboard users */
-:focus {
-  outline: 3px solid color-mix(in srgb, var(--color-primary) 20%, transparent);
+/* Universal placeholder styling */
+input::placeholder,
+textarea::placeholder {
+  color: var(--placeholder);
+  opacity: 1; /* avoid extra dimming in Safari */
+}
+
+/* Optional: slightly clearer placeholder on focus */
+input:focus::placeholder,
+textarea:focus::placeholder {
+  color: color-mix(in srgb, var(--placeholder) 50%, var(--color-fg) 50%);
+}
+
+/* ------------- Focus ring ------------- */
+
+:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-primary) 60%, transparent);
   outline-offset: 2px;
 }
 
-/* small helper classes for spacing used in components */
-.container-max {
-  max-width: 1100px;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
+/* ------------- Transitions ------------- */
 
-/* Add basic transitions to reduce flash when switching themes */
 html,
 body,
 .email-row,
-.card {
+.card,
+.bg-surface {
   transition: background-color 160ms ease, color 160ms ease,
     border-color 160ms ease;
+}
+
+/* simple card helper if needed */
+.card,
+.bg-surface {
+  background: var(--color-surface);
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-border);
+}
+
+/* ------------- Cursor UX affordances ------------- */
+
+/* All actionable buttons */
+button,
+.btn,
+.btn-secondary,
+.btn-danger {
+  cursor: pointer;
+}
+
+/* Disabled hover feedback */
+button[disabled],
+.btn[disabled],
+.btn-secondary[disabled],
+.btn-danger[disabled] {
+  cursor: not-allowed;
+}
+
+/* Checkboxes & radio inputs */
+input[type="checkbox"],
+input[type="radio"] {
+  cursor: pointer;
+}
+
+/* Selects */
+select {
+  cursor: pointer;
+}
+
+/* Clickable list rows (opening email) */
+.email-row {
+  cursor: pointer;
+}
+
+/* Prevent accidental pointer on read-only or disabled rows (failsafe) */
+.email-row[aria-disabled="true"],
+.email-row.disabled {
+  cursor: default;
+}
+
+/* Links */
+a {
+  cursor: pointer;
 }
